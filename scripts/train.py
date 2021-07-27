@@ -1,20 +1,22 @@
 from tqdm import tqdm
+import torch
+def train_func(model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer, NUM_EPOCH=101):
 
-def train_func(model, criterion, optimizer, train_dataloader, test_dataloader, device, save_path, model_name, writer, NUM_EPOCH=15):
-
+    cnt = 0
     for epoch in tqdm(range(NUM_EPOCH)):
         model.train()
 
         for imgs, labels in train_dataloader:
 
+            cnt += 1
             train_loss = 0.
             train_size = 0
             train_pred = 0.
 
             optimizer.zero_grad()
 
-            imgs = imgs
-            labels = labels
+            imgs = imgs.to(device)
+            labels = labels.to(device)
 
             y_pred = model(imgs)
 
@@ -28,10 +30,10 @@ def train_func(model, criterion, optimizer, train_dataloader, test_dataloader, d
 
             optimizer.step()
 
-            writer.add_scalar('Train loss:', (train_loss / train_size), epoch)
-            writer.add_scalar('Train acc:', (train_pred / train_size) * 100, epoch)
+            writer.add_scalar('{} Train loss:'.format(model_name), (train_loss / train_size), cnt)
+            writer.add_scalar('{} Train acc:'.format(model_name), (train_pred / train_size) * 100, cnt)
 
-        val_loss, val_pred, val_size = val_func(model, criterion, optimizer, test_dataloader, device)
+        val_loss, val_pred, val_size = val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
 
         print('Train loss:', (train_loss / train_size))
@@ -42,13 +44,13 @@ def train_func(model, criterion, optimizer, train_dataloader, test_dataloader, d
 
 
 
-        if (epoch + 1) % 10 == 0:
-            save_last_model_path = cfg.output_dir + model_name + ' last_model_state_dict.pth'
+        if (epoch) % 10 == 0:
+            save_last_model_path = save_path + model_name + ' last_model_state_dict.pth'
             torch.save(model.state_dict(), save_last_model_path)
 
 
 
-def val_func(model, criterion, optimizer, test_dataloader, device):
+def val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch):
     model.eval()
     with torch.no_grad():
         for imgs, labels in test_dataloader:
@@ -56,8 +58,8 @@ def val_func(model, criterion, optimizer, test_dataloader, device):
             val_size = 0
             val_pred = 0.
 
-            imgs = imgs
-            labels = labels
+            imgs = imgs.to(device)
+            labels = labels.to(device)
 
             pred = model(imgs)
             loss = criterion(pred, labels)

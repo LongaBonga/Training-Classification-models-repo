@@ -82,7 +82,7 @@ def main():
                                                                          valid_data,
                                                                          args.output_dir,
                                                                          args.model,
-                                                                         3,
+                                                                         args.device,
                                                                          writer=writer)
 
 
