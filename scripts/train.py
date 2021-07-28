@@ -22,27 +22,14 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
             imgs = imgs.to(device)
             labels = labels.to(device)
 
-            with autocast():
-                y_pred = model(imgs)
-                loss = criterion(y_pred, labels)
-
-            model.zero_grad()
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
+            loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels)
 
             train_loss += loss.item()
             train_size += y_pred.size(0)
 
             train_pred += (y_pred.argmax(1) == labels).sum()
 
-            # if num_distrib() > 1:
-            #     train_pred = reduce_tensor(train_pred, num_distrib())
-            #     train_loss = reduce_tensor(train_loss, num_distrib())
-            #     torch.cuda.synchronize()
-
             add_to_writer(writer, train_loss, train_pred, train_size, cnt, 'Train')
-            # writer.add_scalar('Train acc:', (train_pred / train_size) * 100, cnt)
 
         epoch_time = time.time() - epoch_start_time
         print_at_master(
@@ -53,10 +40,10 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
         val_loss, val_pred, val_size = val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
 
-        print_at_master('Train loss:' + str(train_loss / train_size))
-        print_at_master('Val loss:' + str(val_loss / val_size))
-        print_at_master('Train acc:' + str((train_pred / train_size)*100))
-        print_at_master('Val acc:' +str((val_pred / val_size)*100))
+        print_at_master('Train loss: {}'.format((train_loss / train_size)))
+        print_at_master('Val loss: {}'.format(val_loss / val_size))
+        print_at_master('Train acc: {}'.format(train_pred / train_size * 100))
+        print_at_master('Val acc: {}'.format(val_pred / val_size * 100))
 
 
 
@@ -92,6 +79,24 @@ def val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch
                 torch.cuda.synchronize()
 
             add_to_writer(writer, val_loss, val_pred, val_size, epoch, 'Val')
-            # writer.add_scalar('Val loss:', (val_loss / val_size), epoch)
-            # writer.add_scalar('Val acc:', (val_pred / val_size) * 100, epoch)
     return val_loss, val_pred, val_size
+
+
+def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
+    if args.fp16:
+        with autocast():
+            y_pred = model(imgs)
+            loss = criterion(y_pred, labels)
+
+        model.zero_grad()
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
+        return loss, y_pred
+
+    else:
+        y_pred = model(imgs)
+        loss = criterion(y_pred, labels)
+        loss.backward()
+        optimizer.step()
+        return loss, y_pred
