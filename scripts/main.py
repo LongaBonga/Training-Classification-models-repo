@@ -7,6 +7,7 @@ from train import train_func
 from builders.optim_builder import build_optimizer
 from builders.model_builder import build_model
 from torch.utils.tensorboard import SummaryWriter
+from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib
 
 import numpy as np
 import torch
@@ -25,15 +26,17 @@ def main():
     parser.add_argument('--output_dir', type=str, default='', help='directory to store training artifacts')
     parser.add_argument('--model', type=str, default='mobilenet_v2', help='name of model')
     parser.add_argument('--optimazer', type=str, default='sgd', help='name of optimazer')
+    parser.add_argument('--batch_size', type=int, default='64', help='batch size')
     parser.add_argument('--mode', type=str, default='train', help='mode of model train/evaluation')
     parser.add_argument('--device', type=str, default='cpu', choices=['cuda','cpu'],
                         help='choose device to train on')
+    parser.add_argument("--local_rank", default=0, type=int)
 
 
     args = parser.parse_args()
 
     net = build_model(args.model).to(args.device) # make choice of models
-    net.to(args.device)
+    net = to_ddp(net, args)
 
     optimizer = build_optimizer(net, args.optimazer)
     criterion = nn.CrossEntropyLoss()
@@ -58,7 +61,7 @@ def main():
 
     cifar100_train = datasets.CIFAR100('path/to/cifar100_root/', train = True, download=True, transform= train_transform)
     train_data = torch.utils.data.DataLoader(cifar100_train,
-                                              batch_size=32,
+                                              batch_size=args.batch_size,
                                               shuffle=True,
                                               num_workers=4)
 
@@ -72,18 +75,18 @@ def main():
     # if cfg.regime.type == "evaluation":
     #     # function for eval
     # else:
-    writer = SummaryWriter(args.output_dir)
+    writer = SummaryWriter(args.output_dir, comment = args.model)
 
     if args.mode == "train":
-        train_loss_log, train_acc_log, val_loss_log, val_acc_log = train_func(net,
-                                                                         criterion,
-                                                                         optimizer,
-                                                                         train_data,
-                                                                         valid_data,
-                                                                         args.output_dir,
-                                                                         args.model,
-                                                                         args.device,
-                                                                         writer=writer)
+        train_func(args, net,
+                criterion,
+                optimizer,
+                train_data,
+                valid_data,
+                args.output_dir,
+                args.model,
+                args.device,
+                writer=writer)
 
 
 if __name__ == "__main__":

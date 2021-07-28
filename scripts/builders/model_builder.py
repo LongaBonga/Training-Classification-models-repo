@@ -14,7 +14,7 @@ def build_model(model_name):
 
 
     if model_name == 'mobilenet_v3_large':
-        model = models.mobilenetv3_large(pretrained = True)
+        model = models.mobilenet_v3_large(pretrained = True)
 
     if model_name == 'mobilenet_v1':
         model = mobilenet_w1(pretrained = True)
