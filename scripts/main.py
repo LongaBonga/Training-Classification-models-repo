@@ -31,7 +31,7 @@ def main():
     parser.add_argument('--device', type=str, default='cpu', choices=['cuda','cpu'],
                         help='choose device to train on')
     parser.add_argument("--local_rank", default=0, type=int)
-    parser.add_argument("--fp16", default=True, type=bool, choices=[True, False])
+    parser.add_argument("--store_true", default=True, type=bool, choices=[True, False])
 
 
     args = parser.parse_args()

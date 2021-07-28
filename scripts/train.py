@@ -40,10 +40,10 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
         val_loss, val_pred, val_size = val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
 
-        print_at_master('Train loss: {}'.format((train_loss / train_size)))
-        print_at_master('Val loss: {}'.format(val_loss / val_size))
-        print_at_master('Train acc: {}'.format(train_pred / train_size * 100))
-        print_at_master('Val acc: {}'.format(val_pred / val_size * 100))
+        print_at_master(f'Train loss: {train_loss / train_size}')
+        print_at_master(f'Val loss: {val_loss / val_size}')
+        print_at_master(f'Train acc: {train_pred / train_size * 100}')
+        print_at_master(f'Val acc: {val_pred / val_size * 100}')
 
 
 
@@ -83,7 +83,7 @@ def val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch
 
 
 def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
-    if args.fp16:
+    if args.store_true:
         with autocast():
             y_pred = model(imgs)
             loss = criterion(y_pred, labels)
