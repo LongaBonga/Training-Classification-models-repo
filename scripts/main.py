@@ -35,6 +35,7 @@ def main():
     parser.add_argument("--fp16",  action='store_true')
     parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
     parser.add_argument("--model_path", type=str, default='.')
+    parser.add_argument('args.local_rank', type = int, default = 0)
 
 
     args = parser.parse_args()
