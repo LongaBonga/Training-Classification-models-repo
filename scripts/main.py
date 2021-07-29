@@ -20,6 +20,7 @@ import torchvision.models as models
 
 
 
+
 def main():
     # parse arguments
     parser = argparse.ArgumentParser(description='image classification params')
@@ -33,6 +34,7 @@ def main():
     parser.add_argument("--local_rank", default=0, type=int)
     parser.add_argument("--fp16",  action='store_true')
     parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
+    parser.add_argument("--model_path", type=str, default='.')
 
 
     args = parser.parse_args()
@@ -62,6 +64,7 @@ def main():
 
     ##### val mode
     if args.mode == "val":
+        net.load_state_dict(torch.load(args.model_path))
         loss, acr = val_func(args, net, 
                 criterion, 
                 optimizer, 

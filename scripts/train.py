@@ -3,11 +3,13 @@ import time
 import torch
 from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer
 from torch.cuda.amp import GradScaler, autocast
+from torch.optim.lr_scheduler import ExponentialLR
 
 def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer, NUM_EPOCH=40):
 
     cnt = 0
     scaler = GradScaler()
+    scheduler = ExponentialLR(optimizer, gamma=0.9)
 
     for epoch in tqdm(range(NUM_EPOCH)):
         model.train()
@@ -39,6 +41,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
         val_loss, val_acr = val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
+        scheduler.step()
 
         print_at_master(f'Train loss: {train_loss / train_size}')
         print_at_master(f'Val loss: {val_loss}')
@@ -48,7 +51,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
 
 
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 1 == 0:
             save_last_model_path = save_path + model_name + '_last_model_state_dict.pth'
             torch.save(model.state_dict(), save_last_model_path)
 
