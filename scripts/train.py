@@ -9,7 +9,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
     cnt = 0
     scaler = GradScaler()
-    scheduler = ExponentialLR(optimizer, gamma=0.9)
+    scheduler = ExponentialLR(optimizer, gamma=scheduler_coef)
 
     for epoch in tqdm(range(NUM_EPOCH)):
         model.train()
