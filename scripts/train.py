@@ -74,7 +74,7 @@ def val_func(args, model, criterion, optimizer, test_dataloader, device, writer,
                 torch.cuda.synchronize()
 
             if args.mode == 'train':
-                add_to_writer(writer, val_pred, val_size, epoch, 'Val')
+                add_to_writer(writer, None, val_pred, val_size, epoch, 'Val')
             
     return val_pred / val_size
 
