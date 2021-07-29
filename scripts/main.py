@@ -38,6 +38,7 @@ def main():
 
 
     args = parser.parse_args()
+    setup_distrib(args)
 
     net = build_model(args.model).to(args.device)
     net = to_ddp(net, args)
