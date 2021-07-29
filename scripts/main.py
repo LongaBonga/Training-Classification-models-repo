@@ -26,7 +26,7 @@ def main():
     parser = argparse.ArgumentParser(description='image classification params')
     parser.add_argument('--output_dir', type=str, default='', help='directory to store training artifacts')
     parser.add_argument('--model', type=str, default='mobilenet_v2', help='name of model')
-    parser.add_argument('--optimazer', type=str, default='sgd', help='name of optimazer')
+    parser.add_argument('--optimizer', type=str, default='sgd', help='name of optimazer')
     parser.add_argument('--batch_size', type=int, default='64', help='batch size')
     parser.add_argument('--mode', type=str, default='train', help='mode of model train/evaluation')
     parser.add_argument('--device', type=str, default='cpu', choices=['cuda','cpu'],
@@ -42,7 +42,7 @@ def main():
     net = build_model(args.model).to(args.device)
     net = to_ddp(net, args)
 
-    optimizer = build_optimizer(net, args.optimazer)
+    optimizer = build_optimizer(net, args.optimizer)
     criterion = nn.CrossEntropyLoss()
 
     train_data, valid_data = data_loader(args)
@@ -62,7 +62,6 @@ def main():
                 args.device,
                 writer=writer)
 
-    ##### val mode
     if args.mode == "val":
         net.load_state_dict(torch.load(args.model_path))
         loss, acr = val_func(args, net, 

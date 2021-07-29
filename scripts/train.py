@@ -51,7 +51,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
 
 
-        if (epoch + 1) % 1 == 0:
+        if (epoch + 1) % 10 == 0:
             save_last_model_path = save_path + model_name + '_last_model_state_dict.pth'
             torch.save(model.state_dict(), save_last_model_path)
 
