@@ -83,7 +83,7 @@ def val_func(model, criterion, optimizer, test_dataloader, device, writer, epoch
 
 
 def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
-    if args.store_true:
+    if args.fp16:
         with autocast():
             y_pred = model(imgs)
             loss = criterion(y_pred, labels)
