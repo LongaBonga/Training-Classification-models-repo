@@ -33,7 +33,7 @@ def data_loader(args):
 
     train_data = torch.utils.data.DataLoader(cifar100_train,
                                             batch_size=args.batch_size,
-                                            shuffle=True,
+                                            shuffle=False,
                                             num_workers=4,
                                             sampler=sampler_train)
 
@@ -41,7 +41,7 @@ def data_loader(args):
     
     valid_data = torch.utils.data.DataLoader(cifar100_valid,
                                             batch_size=32,
-                                            shuffle=True,
+                                            shuffle=False,
                                             num_workers=4,
                                             sampler=sampler_val)
     return train_data, valid_data
