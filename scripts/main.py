@@ -3,7 +3,7 @@ import sys
 import os.path as osp
 import time
 
-from train import train_func
+from train import train_func, val_func
 from builders.optim_builder import build_optimizer
 from builders.model_builder import build_model
 from torch.utils.tensorboard import SummaryWriter
@@ -32,6 +32,7 @@ def main():
                         help='choose device to train on')
     parser.add_argument("--local_rank", default=0, type=int)
     parser.add_argument("--fp16",  action='store_true')
+    parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
 
 
     args = parser.parse_args()
@@ -44,9 +45,11 @@ def main():
 
     train_data, valid_data = data_loader(args)
     
-    writer = SummaryWriter(args.output_dir, comment = args.model)
+    
 
     if args.mode == "train":
+
+        writer = SummaryWriter(args.output_dir, comment = args.model)
         train_func(args, net,
                 criterion,
                 optimizer,
@@ -57,6 +60,18 @@ def main():
                 args.device,
                 writer=writer)
 
+    ##### val mode
+    if args.mode == "val":
+        loss, acr = val_func(args, net, 
+                criterion, 
+                optimizer, 
+                valid_data, 
+                args.device, 
+                None, 
+                epoch = 0)
+
+        print_at_master(f'Val loss: {loss}')
+        print_at_master(f'Val acc: {acr * 100}')
 
 if __name__ == "__main__":
     main()

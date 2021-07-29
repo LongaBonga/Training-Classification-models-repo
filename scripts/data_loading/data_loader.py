@@ -24,9 +24,9 @@ def data_loader(args):
 
     if num_distrib() > 1:
         sampler_train = torch.utils.data.distributed.DistributedSampler(train_dataset)
-        sampler_val = torch.utils.data.distributed.DistributedSampler(val_dataset)   #OrderedDistributedSampler(val_dataset)
+        sampler_val = torch.utils.data.distributed.DistributedSampler(val_dataset) 
 
-    cifar100_train = datasets.CIFAR100('path/to/cifar100_root/', train = True, download=True, transform= train_transform)
+    cifar100_train = datasets.CIFAR100(args.data_path, train = True, download=True, transform= train_transform)
     train_data = torch.utils.data.DataLoader(cifar100_train,
                                             batch_size=args.batch_size,
                                             shuffle=True,
@@ -34,7 +34,7 @@ def data_loader(args):
                                             sampler=sampler_train)
 
 
-    cifar100_valid = datasets.CIFAR100('path/to/cifar100_root/', train = False, download=True, transform= valid_transform)
+    cifar100_valid = datasets.CIFAR100(args.data_path, train = False, download=True, transform= valid_transform) 
     valid_data = torch.utils.data.DataLoader(cifar100_valid,
                                             batch_size=32,
                                             shuffle=True,
