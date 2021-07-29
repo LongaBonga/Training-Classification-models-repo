@@ -39,12 +39,10 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
                                                                        args.batch_size / epoch_time * max(num_distrib(),
                                                                                                           1)))
 
-        val_loss, val_acr = val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch)
+        val_acr = val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
         scheduler.step()
-
         print_at_master(f'Train loss: {train_loss / train_size}')
-        print_at_master(f'Val loss: {val_loss}')
         print_at_master(f'Train acc: {train_pred / train_size * 100}')
         print_at_master(f'Val acc: {val_acr * 100}')
 
@@ -61,30 +59,24 @@ def val_func(args, model, criterion, optimizer, test_dataloader, device, writer,
     model.eval()
     with torch.no_grad():
         for imgs, labels in test_dataloader:
-            val_loss = 0.
             val_size = 0
             val_pred = 0.
 
             imgs = imgs.to(device)
             labels = labels.to(device)
-
             pred = model(imgs)
-            loss = criterion(pred, labels)
 
-            val_loss += loss.item()
             val_size += pred.size(0)
-
             val_pred += (pred.argmax(1) == labels).sum()
 
             if num_distrib() > 1:
                 val_pred = reduce_tensor(val_pred, num_distrib())
-                val_loss = reduce_tensor(val_loss, num_distrib())
                 torch.cuda.synchronize()
 
             if args.mode == 'train':
-                add_to_writer(writer, val_loss, val_pred, val_size, epoch, 'Val')
+                add_to_writer(writer, val_pred, val_size, epoch, 'Val')
             
-    return val_loss / val_size, val_pred / val_size
+    return val_pred / val_size
 
 
 def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):

@@ -23,9 +23,8 @@ def print_at_master(str):
     if is_master():
         print(str)
 
-def add_to_writer(writer, loss, pred, size, cnt, mode):
+def add_to_writer(writer, pred, size, cnt, mode):
     if is_master():
-        writer.add_scalar(mode +' loss:', (loss / size), cnt)
         writer.add_scalar(mode +' acc:', (pred / size) * 100, cnt)
 
 
