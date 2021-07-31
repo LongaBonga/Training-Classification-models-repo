@@ -1,5 +1,6 @@
 import torchvision.models as models
-from MobileNetV1.MobileNetv1 import mobilenet_w1
+import os
+from MobileNetV1.MobileNetv1 import mobilenet_w1, get_mobilenet
 
 
 __AVAI_MODELS__ = {
@@ -17,6 +18,8 @@ def build_model(model_name):
         model = models.mobilenet_v3_large(pretrained = True)
 
     if model_name == 'mobilenet_v1':
-        model = mobilenet_w1(pretrained = True)
+        root = os.path.join(os.getenv('MODELS_ROOT'), ".torch", "models") if os.getenv('MODELS_ROOT') else \
+            os.path.join("~", ".torch", "models")
+        model = get_mobilenet(width_scale=1.0, model_name="mobilenet_w1", root = root)
 
     return model

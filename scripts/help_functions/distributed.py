@@ -1,7 +1,7 @@
 import os
 import torch
 import torch.distributed as dist
-
+from torch.utils.tensorboard import SummaryWriter
 
 def get_dist_info():
     initialized = dist.is_available() and dist.is_initialized()
@@ -53,3 +53,7 @@ def reduce_tensor(tensor, n):
 
 def num_distrib():
     return int(os.environ.get('WORLD_SIZE', 0))
+
+def init_writer(args):
+    if is_master():
+        return SummaryWriter(args.output_dir, comment = args.model)

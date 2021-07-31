@@ -115,8 +115,6 @@ def get_mobilenet(width_scale,
     root : str, default '~/.torch/models'
         Location for keeping the model parameters.
     """
-    root = os.path.join(os.getenv('MODELS_ROOT'), ".torch", "models") if os.getenv('MODELS_ROOT') else \
-            os.path.join("~", ".torch", "models")
     channels = [[32], [64], [128, 128], [256, 256], [512, 512, 512, 512, 512, 512], [1024, 1024]]
     first_stage_stride = False
 

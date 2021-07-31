@@ -5,16 +5,16 @@ from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, n
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import OneCycleLR
 
-def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer, NUM_EPOCH=40):
+def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer):
 
     cnt = 0
     scaler = GradScaler()
     scheduler = OneCycleLR(optimizer, max_lr = 0.001, pct_start=0.2, anneal_strategy='cos',
             cycle_momentum=True, base_momentum=0.85,
-            max_momentum=0.95, div_factor=args.scheduler_coef, total_steps = 39,
+            max_momentum=0.95, div_factor=args.scheduler_coef, total_steps = args.num_epoch,
             final_div_factor=10000.0)
 
-    for epoch in tqdm(range(NUM_EPOCH)):
+    for epoch in tqdm(range(args.num_epoch)):
         model.train()
 
         epoch_start_time = time.time()

@@ -6,8 +6,7 @@ import time
 from train import train_func, val_func
 from builders.optim_builder import build_optimizer
 from builders.model_builder import build_model
-from torch.utils.tensorboard import SummaryWriter
-from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib
+from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, init_writer
 from data_loading.data_loader import data_loader
 
 import numpy as np
@@ -36,6 +35,7 @@ def main():
     parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
     parser.add_argument("--model_path", type=str, default='.')
     parser.add_argument("--scheduler_coef", type=float, default=0.97)
+    parser.add_argument("--num_epoch", type=int, default=40)
 
 
 
@@ -54,7 +54,7 @@ def main():
 
     if args.mode == "train":
 
-        writer = SummaryWriter(args.output_dir, comment = args.model)
+        writer = init_writer(args)
         train_func(args, net,
                 criterion,
                 optimizer,
