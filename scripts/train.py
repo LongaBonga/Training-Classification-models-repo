@@ -3,13 +3,16 @@ import time
 import torch
 from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer
 from torch.cuda.amp import GradScaler, autocast
-from torch.optim.lr_scheduler import ExponentialLR
+from torch.optim.lr_scheduler import OneCycleLR
 
 def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer, NUM_EPOCH=40):
 
     cnt = 0
     scaler = GradScaler()
-    scheduler = ExponentialLR(optimizer, gamma=args.scheduler_coef)
+    scheduler = OneCycleLR(optimizer, max_lr = 0.001, pct_start=0.2, anneal_strategy='cos',
+            cycle_momentum=True, base_momentum=0.85,
+            max_momentum=0.95, div_factor=args.scheduler_coef, total_steps = 39,
+            final_div_factor=10000.0)
 
     for epoch in tqdm(range(NUM_EPOCH)):
         model.train()
