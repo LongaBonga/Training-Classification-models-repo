@@ -1,6 +1,7 @@
 from torchvision import datasets, transforms
 from help_functions.distributed import num_distrib
 import torch
+import os
 
 def data_loader(args):
     train_transform = transforms.Compose([
