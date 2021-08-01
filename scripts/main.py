@@ -51,6 +51,7 @@ def main():
     train_data, valid_data = data_loader(args)
     
     
+    start_time = time.time()
 
     if args.mode == "train":
 
@@ -77,6 +78,10 @@ def main():
 
         print_at_master(f'Val loss: {loss}')
         print_at_master(f'Val acc: {acr * 100}')
+
+    finish_time = time.time()
+
+    print(f'Program finished! Spending Time: {finish_time - start_time}')
 
 if __name__ == "__main__":
     main()
