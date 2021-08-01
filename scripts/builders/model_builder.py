@@ -20,6 +20,6 @@ def build_model(model_name):
     if model_name == 'mobilenet_v1':
         root = os.path.join(os.getenv('MODELS_ROOT'), ".torch", "models") if os.getenv('MODELS_ROOT') else \
             os.path.join("~", ".torch", "models")
-        model = get_mobilenet(width_scale=1.0, model_name="mobilenet_w1", root = root)
+        model = get_mobilenet(width_scale=1.0, model_name="mobilenet_w1", root = root, pretrained = True)
 
     return model
