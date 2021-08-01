@@ -81,7 +81,7 @@ def main():
 
     finish_time = time.time()
 
-    print(f'Program finished! Spending Time: {finish_time - start_time}')
+    print_at_master(f'Program finished! Total Time: {finish_time - start_time}')
 
 if __name__ == "__main__":
     main()
