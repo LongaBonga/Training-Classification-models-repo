@@ -26,8 +26,8 @@ def data_loader(args):
     data_path_train = os.path.join(args.data_path, 'train')
     data_path_val = os.path.join(args.data_path, 'val')
 
-    train_dataset = datasets.CIFAR100(args.data_path, transform= train_transform)
-    val_dataset = datasets.CIFAR100(args.data_path,  transform= valid_transform)
+    train_dataset = datasets.CIFAR100(args.data_path_train, transform= train_transform)
+    val_dataset = datasets.CIFAR100(args.data_path_val,  transform= valid_transform)
 
     if num_distrib() > 1:
         sampler_train = torch.utils.data.distributed.DistributedSampler(train_dataset)
