@@ -36,6 +36,7 @@ def main():
     parser.add_argument("--model_path", type=str, default= None)
     parser.add_argument("--scheduler_coef", type=float, default=0.97)
     parser.add_argument("--num_epoch", type=int, default=40)
+    parser.add_argument("--lr", type=float, default=0.001)
 
 
 
