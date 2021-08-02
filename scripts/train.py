@@ -27,7 +27,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
             imgs = imgs.to(device)
             labels = labels.to(device)
 
-            loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels)
+            loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, device)
 
             train_loss += loss.item()
             train_size += y_pred.size(0)
@@ -82,11 +82,11 @@ def val_func(args, model, criterion, optimizer, test_dataloader, device, writer,
     return val_pred / val_size
 
 
-def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
+def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, device):
     if args.fp16:
         with autocast():
             y_pred = model(imgs)
-            loss = criterion(y_pred, labels) + L1(model, 0.0005)
+            loss = criterion(y_pred, labels) + L1(model, 0.0005, device)
 
         model.zero_grad()
         scaler.scale(loss).backward()
@@ -101,7 +101,7 @@ def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
         optimizer.step()
         return loss, y_pred
 
-def L1(model, coef):
+def L1(model, coef, device):
     l1_reg = torch.tensor(0.).to(device)
     for param in model.parameters():
         l1_reg += torch.sum(torch.abs(param))
