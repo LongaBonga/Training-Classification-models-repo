@@ -71,15 +71,13 @@ def main():
 
     if args.mode == "val":
         net.load_state_dict(torch.load(args.model_path))
-        loss, acr = val_func(args, net, 
+        acr = val_func(args, net, 
                 criterion, 
                 optimizer, 
                 valid_data, 
                 args.device, 
-                None, 
-                epoch = 0)
+                None)
 
-        print_at_master(f'Val loss: {loss}')
         print_at_master(f'Val acc: {acr * 100}')
 
     finish_time = time.time()
