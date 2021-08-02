@@ -46,7 +46,7 @@ def main():
     net = build_model(args.model).to(args.device)
     net = to_ddp(net, args)
 
-    optimizer = build_optimizer(net, args.optimizer)
+    optimizer = build_optimizer(args, net, args.optimizer)
     criterion = nn.CrossEntropyLoss()
 
     train_data, valid_data = data_loader(args)

@@ -86,7 +86,7 @@ def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
     if args.fp16:
         with autocast():
             y_pred = model(imgs)
-            loss = criterion(y_pred, labels)
+            loss = criterion(y_pred, labels) + L1(model, 0.0005)
 
         model.zero_grad()
         scaler.scale(loss).backward()
@@ -100,3 +100,9 @@ def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels):
         loss.backward()
         optimizer.step()
         return loss, y_pred
+
+def L1(model, coef):
+    l1_reg = torch.tensor(0.).to(device)
+    for param in model.parameters():
+        l1_reg += torch.sum(torch.abs(param))
+    return l1_reg * coef
