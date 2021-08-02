@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import time
 import torch
-from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer
+from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer, is_master
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import OneCycleLR
 
@@ -52,8 +52,8 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
 
 
-        if (epoch + 1) % 10 == 0:
-            save_last_model_path = save_path + model_name + '_last_model_state_dict.pth'
+        if is_master() and (epoch + 1) % 10 == 0:
+            save_last_model_path = model_name + '_last_model_state_dict.pth'
             torch.save(model.state_dict(), save_last_model_path)
 
 
