@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--local_rank", default=0, type=int)
     parser.add_argument("--fp16",  action='store_true')
     parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
-    parser.add_argument("--model_path", type=str, default='.')
+    parser.add_argument("--model_path", type=str, default= None)
     parser.add_argument("--scheduler_coef", type=float, default=0.97)
     parser.add_argument("--num_epoch", type=int, default=40)
 
@@ -54,6 +54,9 @@ def main():
     start_time = time.time()
 
     if args.mode == "train":
+        
+        if args.model_path != None:
+             net.load_state_dict(torch.load(args.model_path))
 
         writer = init_writer(args)
         train_func(args, net,
