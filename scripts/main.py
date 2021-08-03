@@ -57,7 +57,10 @@ def main():
     if args.mode == "train":
         
         if args.model_path != None:
-            if num_distrib() == 1:
+            if num_distrib() > 1:
+                net.load_state_dict(torch.load(args.model_path))
+                
+            else:
                 state_dict = torch.load(args.model_path)
                 new_state_dict = OrderedDict()
 
@@ -67,8 +70,7 @@ def main():
 
                 net.load_state_dict(new_state_dict)
 
-            else:
-                net.load_state_dict(torch.load(args.model_path))
+                
 
         writer = init_writer(args)
         train_func(args, net,
@@ -82,7 +84,11 @@ def main():
                 writer=writer)
 
     if args.mode == "val":
-        if num_distrib() == 1:
+        if num_distrib() > 1:
+            net.load_state_dict(torch.load(args.model_path))
+            
+
+        else:
             state_dict = torch.load(args.model_path)
             new_state_dict = OrderedDict()
 
@@ -91,9 +97,6 @@ def main():
                 new_state_dict[name] = v
 
             net.load_state_dict(new_state_dict)
-
-        else:
-            net.load_state_dict(torch.load(args.model_path))
 
         acr = val_func(args, net, 
                 criterion, 
