@@ -59,9 +59,11 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 def val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch = 0):
     model.eval()
     with torch.no_grad():
+        val_size = 0
+        val_pred = 0.
         for imgs, labels in test_dataloader:
-            val_size = 0
-            val_pred = 0.
+            
+            
 
             imgs = imgs.to(device)
             labels = labels.to(device)
