@@ -1,5 +1,5 @@
 from builders.model_builder import load_pretrained_weights
-
+from subprocess import run, DEVNULL, CalledProcessError
 def export_onnx(model, snapshot_path, img_size=(128,128), save_path='model.onnx'):
     # input to inference model
     dummy_input = torch.rand(size=(1,3,*img_size))

@@ -46,7 +46,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
         if args.scheduler:
             scheduler.step()
-            
+
         print_at_master(f'Train loss: {train_loss / train_size}')
         print_at_master(f'Train acc: {train_pred / train_size * 100}')
         print_at_master(f'Val acc: {val_acr * 100}')
@@ -78,8 +78,8 @@ def val_func(args, model, criterion, optimizer, test_dataloader, device, writer,
                 val_pred = reduce_tensor(val_pred, num_distrib())
                 torch.cuda.synchronize()
 
-            if args.mode == 'train':
-                add_to_writer(writer, None, val_pred, val_size, epoch, 'Val')
+        if args.mode == 'train':
+            add_to_writer(writer, None, val_pred, val_size, epoch, 'Val')
             
     return val_pred / val_size
 
