@@ -71,16 +71,9 @@ def main():
         if args.model_path != None:
             if num_distrib() > 1:
                 net.load_state_dict(torch.load(args.model_path))
-                
-            else:
-                state_dict = torch.load(args.model_path)
-                new_state_dict = OrderedDict()
-
-                for k, v in state_dict.items():
-                    name = k[7:] # remove `module.`
-                    new_state_dict[name] = v
-
-                net.load_state_dict(new_state_dict)
+            
+             else:
+                load_pretrained_weights(net, file_path = args.model_path)
 
                 
 
@@ -97,19 +90,10 @@ def main():
 
     if args.mode == "val":
         if num_distrib() > 1:
-        #     net.load_state_dict(torch.load(args.model_path))
-            load_pretrained_weights(net, file_path = args.model_path, extra_prefix = 'module')
-            
+
+            net.load_state_dict(torch.load(args.model_path))
 
         else:
-        #     state_dict = torch.load(args.model_path,  map_location = args.device)
-        #     new_state_dict = OrderedDict()
-
-        #     for k, v in state_dict.items():
-        #         name = k[7:] # remove `module.`
-        #         new_state_dict[name] = v
-
-        #     net.load_state_dict(new_state_dict)
             load_pretrained_weights(net, file_path = args.model_path)
 
         acr = val_func(args, net, 
