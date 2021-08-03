@@ -9,6 +9,7 @@ from builders.model_builder import build_model
 from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, init_writer
 from data_loading.data_loader import data_loader
 from help_functions.flops_counter import get_model_complexity_info
+from builders.model_builder import load_pretrained_weights
 
 import numpy as np
 import torch
@@ -36,7 +37,7 @@ def main():
     parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
     parser.add_argument("--model_path", type=str, default= None)
     parser.add_argument("--scheduler", action='store_true')
-    parser.add_argument("--scheduler_coef", type=float, default = 0.00001)
+    parser.add_argument("--scheduler_coef", type=float, default = 2)
     parser.add_argument("--num_epoch", type=int, default=40)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--l1_coef", type=float, default=0.0000001)
@@ -59,7 +60,7 @@ def main():
         macs, params = get_model_complexity_info(net, (3, 224, 224),
                                              as_strings=True,
                                              print_per_layer_stat=True,
-                                             ost=ost)
+                                             )
         print_at_master('{:<30}  {:<8}'.format('Computational complexity: ', macs))
         print_at_master('{:<30}  {:<8}'.format('Number of parameters: ', params))
 
@@ -96,18 +97,20 @@ def main():
 
     if args.mode == "val":
         if num_distrib() > 1:
-            net.load_state_dict(torch.load(args.model_path))
+        #     net.load_state_dict(torch.load(args.model_path))
+            load_pretrained_weights(net, file_path, args.model_path)
             
 
         else:
-            state_dict = torch.load(args.model_path,  map_location = args.device)
-            new_state_dict = OrderedDict()
+        #     state_dict = torch.load(args.model_path,  map_location = args.device)
+        #     new_state_dict = OrderedDict()
 
-            for k, v in state_dict.items():
-                name = k[7:] # remove `module.`
-                new_state_dict[name] = v
+        #     for k, v in state_dict.items():
+        #         name = k[7:] # remove `module.`
+        #         new_state_dict[name] = v
 
-            net.load_state_dict(new_state_dict)
+        #     net.load_state_dict(new_state_dict)
+            load_pretrained_weights(net, file_path = args.model_path)
 
         acr = val_func(args, net, 
                 criterion, 
