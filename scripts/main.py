@@ -72,7 +72,7 @@ def main():
             if num_distrib() > 1:
                 net.load_state_dict(torch.load(args.model_path))
             
-             else:
+            else:
                 load_pretrained_weights(net, file_path = args.model_path)
 
                 
