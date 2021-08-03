@@ -4,5 +4,5 @@ __pycache__/
 /scripts/runs/
 .ipynb_checkpoints/
 *.pth
-/runs/
+runs/
 /scripts/start.sh
