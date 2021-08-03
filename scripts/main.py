@@ -34,9 +34,10 @@ def main():
     parser.add_argument("--fp16",  action='store_true')
     parser.add_argument("--data_path", type=str, default='path/to/cifar100_root/')
     parser.add_argument("--model_path", type=str, default= None)
-    parser.add_argument("--scheduler_coef", type=float, default=0.97)
+    parser.add_argument("--scheduler", action='store_true')
     parser.add_argument("--num_epoch", type=int, default=40)
     parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--l1_coef", type=float, default=0.0000001)
 
 
 
@@ -89,7 +90,7 @@ def main():
             
 
         else:
-            state_dict = torch.load(args.model_path)
+            state_dict = torch.load(args.model_path,  map_location = args.device)
             new_state_dict = OrderedDict()
 
             for k, v in state_dict.items():

@@ -44,7 +44,9 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
         val_acr = val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
-        scheduler.step()
+        if args.scheduler:
+            scheduler.step()
+            
         print_at_master(f'Train loss: {train_loss / train_size}')
         print_at_master(f'Train acc: {train_pred / train_size * 100}')
         print_at_master(f'Val acc: {val_acr * 100}')
@@ -86,7 +88,7 @@ def gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, devic
     if args.fp16:
         with autocast():
             y_pred = model(imgs)
-            loss = criterion(y_pred, labels) + L1(model, 0.0005, device)
+            loss = criterion(y_pred, labels) + L1(model, args.l1_coef, device)
 
         model.zero_grad()
         scaler.scale(loss).backward()
