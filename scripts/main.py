@@ -98,7 +98,7 @@ def main():
     if args.mode == "val":
         if num_distrib() > 1:
         #     net.load_state_dict(torch.load(args.model_path))
-            load_pretrained_weights(net, file_path, args.model_path)
+            load_pretrained_weights(net, file_path = args.model_path)
             
 
         else:
