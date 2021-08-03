@@ -61,7 +61,7 @@ def _print_loading_weights_inconsistencies(discarded_layers, unmatched_layers):
             format(pformat(unmatched_layers))
         )
 
-def load_pretrained_weights(model, file_path='', pretrained_dict=None, extra_prefix=''):
+def load_pretrained_weights(model, file_path='', pretrained_dict=None, extra_prefix='module'):
     r"""Loads pretrianed weights to model. Imported from openvinotoolkit/deep-object-reid.
     Features::
         - Incompatible layers (unmatched in name or size) will be ignored.
