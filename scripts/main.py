@@ -16,7 +16,7 @@ import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.models as models
-
+from collections import OrderedDict
 
 
 
@@ -57,7 +57,18 @@ def main():
     if args.mode == "train":
         
         if args.model_path != None:
-             net.load_state_dict(torch.load(args.model_path))
+            if num_distrib() == 1:
+                state_dict = torch.load(args.model_path)
+                new_state_dict = OrderedDict()
+
+                for k, v in state_dict.items():
+                    name = k[7:] # remove `module.`
+                    new_state_dict[name] = v
+
+                net.load_state_dict(new_state_dict)
+
+            else:
+                net.load_state_dict(torch.load(args.model_path))
 
         writer = init_writer(args)
         train_func(args, net,
@@ -71,7 +82,19 @@ def main():
                 writer=writer)
 
     if args.mode == "val":
-        net.load_state_dict(torch.load(args.model_path))
+        if num_distrib() == 1:
+            state_dict = torch.load(args.model_path)
+            new_state_dict = OrderedDict()
+
+            for k, v in state_dict.items():
+                name = k[7:] # remove `module.`
+                new_state_dict[name] = v
+
+            net.load_state_dict(new_state_dict)
+
+        else:
+            net.load_state_dict(torch.load(args.model_path))
+
         acr = val_func(args, net, 
                 criterion, 
                 optimizer, 
