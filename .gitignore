@@ -4,5 +4,6 @@ __pycache__/
 /scripts/runs/
 .ipynb_checkpoints/
 *.pth
-runs/
+/runs/
+/data_for_OpenVino_inference/
 /scripts/start.sh
