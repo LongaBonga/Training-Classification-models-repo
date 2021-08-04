@@ -46,7 +46,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
 
         val_acr = val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
-        if args.scheduler:
+        if args.scheduler and epoch > 35:
             scheduler.step(loss)
 
         print_at_master(f'Train loss: {train_loss / train_size}')
