@@ -3,16 +3,18 @@ import time
 import torch
 from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer, is_master
 from torch.cuda.amp import GradScaler, autocast
-from torch.optim.lr_scheduler import OneCycleLR
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer):
 
     cnt = 0
     scaler = GradScaler()
-    scheduler = OneCycleLR(optimizer, max_lr = 0.001, pct_start=0.2, anneal_strategy='cos',
-            cycle_momentum=True, base_momentum=0.85,
-            max_momentum=0.95, div_factor=args.scheduler_coef, total_steps = args.num_epoch,
-            final_div_factor=10000.0)
+    scheduler = ReduceLROnPlateau(optimizer, 'min')
+
+    # scheduler = OneCycleLR(optimizer, max_lr = 0.001, pct_start=0.2, anneal_strategy='cos',
+    #         cycle_momentum=True, base_momentum=0.85,
+    #         max_momentum=0.95, div_factor=args.scheduler_coef, total_steps = args.num_epoch,
+    #         final_div_factor=10000.0)
 
     for epoch in tqdm(range(args.num_epoch)):
         model.train()
@@ -45,7 +47,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
         val_acr = val_func(args, model, criterion, optimizer, test_dataloader, device, writer, epoch)
 
         if args.scheduler:
-            scheduler.step()
+            scheduler.step(loss)
 
         print_at_master(f'Train loss: {train_loss / train_size}')
         print_at_master(f'Train acc: {train_pred / train_size * 100}')

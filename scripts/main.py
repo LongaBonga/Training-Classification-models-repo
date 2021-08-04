@@ -7,9 +7,11 @@ from train import train_func, val_func
 from builders.optim_builder import build_optimizer
 from builders.model_builder import build_model
 from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, init_writer
-from data_loading.data_loader import data_loader
+from data_loading.data_loader import data_loader, inference_loader
 from help_functions.flops_counter import get_model_complexity_info
 from builders.model_builder import load_pretrained_weights
+
+from OpenVino_inference.OpenVino_inference import eval_inference, inference 
 
 import numpy as np
 import torch
@@ -19,7 +21,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.models as models
 from collections import OrderedDict
-
 
 
 def main():
@@ -42,6 +43,8 @@ def main():
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--l1_coef", type=float, default=0.0000001)
     parser.add_argument("--complexity", action='store_true')
+    parser.add_argument("--infr", action='store_true')
+    parser.add_argument("--eval_infr_path", type=str, default= None)
 
 
 
@@ -105,8 +108,19 @@ def main():
 
         print_at_master(f'Val acc: {acr * 100}')
 
-    finish_time = time.time()
 
+    
+
+    if args.infr:
+        inference(args, net, args.model_path, (224, 224), save_path = args.output_dir)
+
+    if args.eval_infr_path != None:
+
+        inference_data = inference_loader(args)
+        acr = eval_inference(args.eval_infr_path, inference_data)
+        print_at_master(f'Inference acc: {acr * 100}')
+
+    finish_time = time.time()
     print_at_master(f'Program finished! Total Time: {finish_time - start_time}')
 
 if __name__ == "__main__":
