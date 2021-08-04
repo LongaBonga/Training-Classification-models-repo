@@ -112,6 +112,9 @@ def main():
     
 
     if args.conversion:
+        
+        from OpenVino_inference.OpenVino_inference import eval_inference, conversion 
+
         conversion(args, net, args.model_path, (224, 224), save_path = args.output_dir)
 
     if args.eval_infr_path != None:
