@@ -24,7 +24,7 @@ def export_mo(onnx_model_path, mean_values, scale_values, save_path):
                    f'--reverse_input_channels ') 
 
     try:
-        run('/opt/intel/openvino_2021/deployment_tools/model_optimizer/mo.py -h', stdout=DEVNULL, stderr=DEVNULL, shell=True, check=True)
+        run('mo.py -h', stdout=DEVNULL, stderr=DEVNULL, shell=True, check=True)
     except CalledProcessError as _:
         print('OpenVINO Model Optimizer not found, please source '
             '/opt/intel/openvino_2021/bin/setupvars.sh before running this script.')

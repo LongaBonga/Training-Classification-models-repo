@@ -5,7 +5,7 @@ import os
 from openvino.inference_engine import IENetwork, IECore
 from help_functions.distributed import print_at_master
 
-def inference(args, model, snapshot_path, img_size=(128,128), save_path='./'):
+def conversion(args, model, snapshot_path, img_size=(128,128), save_path='./'):
 
     path = osp.join(save_path, f'data_for_OpenVino_inference/{args.model}')
     os.makedirs(path, exist_ok=True)
@@ -21,7 +21,7 @@ def inference(args, model, snapshot_path, img_size=(128,128), save_path='./'):
     IR_path = path
 
     export_mo(save_path + '/model.onnx', mean_values, scale_values, save_path = IR_path)
-    print_at_master(f'model enfrences successfully! path \n {IR_path}')
+    print_at_master(f'model conversions successfully! path \n {IR_path}')
 
 
 def eval_inference(path, inference_data):
@@ -40,8 +40,6 @@ def eval_inference(path, inference_data):
 
     val_size = len(inference_data)
     val_pred = 0.
-
-    print(val_size)
 
     for img, label in inference_data:
         # print(img_numpy)

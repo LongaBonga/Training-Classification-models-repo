@@ -11,7 +11,7 @@ from data_loading.data_loader import data_loader, inference_loader
 from help_functions.flops_counter import get_model_complexity_info
 from builders.model_builder import load_pretrained_weights
 
-from OpenVino_inference.OpenVino_inference import eval_inference, inference 
+from OpenVino_inference.OpenVino_inference import eval_inference, conversion 
 
 import numpy as np
 import torch
@@ -43,7 +43,7 @@ def main():
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--l1_coef", type=float, default=0.0000001)
     parser.add_argument("--complexity", action='store_true')
-    parser.add_argument("--infr", action='store_true')
+    parser.add_argument("--conversion", action='store_true')
     parser.add_argument("--eval_infr_path", type=str, default= None)
 
 
@@ -111,8 +111,8 @@ def main():
 
     
 
-    if args.infr:
-        inference(args, net, args.model_path, (224, 224), save_path = args.output_dir)
+    if args.conversion:
+        conversion(args, net, args.model_path, (224, 224), save_path = args.output_dir)
 
     if args.eval_infr_path != None:
 

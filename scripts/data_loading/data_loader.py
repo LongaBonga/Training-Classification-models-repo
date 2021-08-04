@@ -4,13 +4,6 @@ import torch
 import os
 import numpy as np
 
-class ToNumpy(transforms.ToTensor):
-        """Convert Image in sample to Numpy."""
-        def __call__(self, sample):
-            return np.asarray(sample)[..., ::-1].transpose((2, 0, 1)) / 255
-                    
-
-
 def data_loader(args):
     train_transform = transforms.Compose([
         transforms.Resize(224),
@@ -64,9 +57,11 @@ def data_loader(args):
 
 def inference_loader(args):
 
+    ToNumpy = lambda x : np.asarray(x)[..., ::-1].transpose((2, 0, 1)) / 255
+
     inference_transform = transforms.Compose([
     transforms.Resize(224),
-    ToNumpy()
+    transforms.Lambda(ToNumpy)
     ])
 
     data_path = os.path.join(args.data_path, 'val')
@@ -79,18 +74,3 @@ def inference_loader(args):
                                             num_workers=4)
     return inference_data
 
-
-    # class ToTensor(object):
-    # """Convert ndarrays in sample to Tensors."""
-
-    # def __call__(self, sample):
-    #     image, landmarks = sample['image'], sample['landmarks']
-
-    #     # swap color axis because
-    #     # numpy image: H x W x C
-    #     # torch image: C x H x W
-    #     image = image.transpose((2, 0, 1))
-    #     return {'image': torch.from_numpy(image),
-    #             'landmarks': torch.from_numpy(landmarks)}
-
-    
