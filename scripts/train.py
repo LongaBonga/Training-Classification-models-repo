@@ -30,16 +30,16 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
             imgs = imgs.to(device)
             labels = labels.to(device)
 
-            # if args.mixup:
-            #     inputs, labels_a, labels_b, lam = mixup_data(imgs, labels, 0.2)
-            #     optimizer.zero_grad()
-            #     y_pred = model(inputs)
-            #     loss = mixup_criterion(criterion, y_pred, labels_a, labels_b, lam)
+            if args.mixup:
+                inputs, labels_a, labels_b, lam = mixup_data(imgs, labels, 0.2)
+                optimizer.zero_grad()
+                y_pred = model(inputs)
+                loss = mixup_criterion(criterion, y_pred, labels_a, labels_b, lam)
 
-            #     loss.backward()
-            #     optimizer.step()
+                loss.backward()
+                optimizer.step()
 
-            # else:
+            else:
             loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, device)
 
             train_loss += loss.item()
