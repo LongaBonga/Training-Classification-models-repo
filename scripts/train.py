@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import time
 import torch
-import help_functions
+from help_functions import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer, is_master
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
