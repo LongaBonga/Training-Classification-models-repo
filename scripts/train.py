@@ -4,6 +4,7 @@ import torch
 from help_functions import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, add_to_writer, is_master
 from torch.cuda.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torchtoolbox.tools import mixup_data, mixup_criterion
 
 def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloader, save_path, model_name,device, writer):
 
@@ -29,6 +30,16 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
             imgs = imgs.to(device)
             labels = labels.to(device)
 
+            # if args.mixup:
+            #     inputs, labels_a, labels_b, lam = mixup_data(imgs, labels, 0.2)
+            #     optimizer.zero_grad()
+            #     y_pred = model(inputs)
+            #     loss = mixup_criterion(criterion, y_pred, labels_a, labels_b, lam)
+
+            #     loss.backward()
+            #     optimizer.step()
+
+            # else:
             loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, device)
 
             train_loss += loss.item()

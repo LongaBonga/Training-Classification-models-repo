@@ -44,6 +44,7 @@ def main():
     parser.add_argument("--complexity", action='store_true')
     parser.add_argument("--conversion", action='store_true')
     parser.add_argument("--eval_infr_path", type=str, default= None)
+    parser.add_argument("--mixup", action='store_true')
 
 
 

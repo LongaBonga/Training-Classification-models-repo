@@ -3,10 +3,12 @@ from help_functions import num_distrib
 import torch
 import os
 import numpy as np
+from torchtoolbox.transform import Cutout
 
 def data_loader(args):
     train_transform = transforms.Compose([
         transforms.Resize(224),
+        Cutout(),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406],
