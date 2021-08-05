@@ -40,7 +40,7 @@ def train_func(args, model, criterion, optimizer, train_dataloader, test_dataloa
                 optimizer.step()
 
             else:
-            loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, device)
+                loss, y_pred =  gradient_step(args, model, optimizer, criterion, scaler, imgs, labels, device)
 
             train_loss += loss.item()
             train_size += y_pred.size(0)
