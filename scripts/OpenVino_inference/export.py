@@ -1,5 +1,5 @@
 
-from builders.model_builder import load_pretrained_weights
+from builders import load_pretrained_weights
 from subprocess import run, DEVNULL, CalledProcessError
 import torch
 def export_onnx(model, snapshot_path, img_size=(128,128), save_path='model.onnx'):

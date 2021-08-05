@@ -4,12 +4,12 @@ import os.path as osp
 import time
 
 from train import train_func, val_func
-from builders.optim_builder import build_optimizer
-from builders.model_builder import build_model
-from help_functions.distributed import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, init_writer
-from data_loading.data_loader import data_loader, inference_loader
+from builders import build_optimizer
+from builders import build_model
+from help_functions import print_at_master, to_ddp, reduce_tensor, num_distrib, setup_distrib, init_writer
+from data_loading import data_loader, inference_loader
 from help_functions.flops_counter import get_model_complexity_info
-from builders.model_builder import load_pretrained_weights
+from builders import load_pretrained_weights
  
 
 import numpy as np
@@ -112,11 +112,13 @@ def main():
 
     if args.conversion:
 
-        from OpenVino_inference.OpenVino_inference import eval_inference, conversion 
+        from OpenVino_inference import conversion 
 
         conversion(args, net, args.model_path, (224, 224), save_path = args.output_dir)
 
     if args.eval_infr_path != None:
+
+        from OpenVino_inference import eval_inference
 
         inference_data = inference_loader(args)
         acr = eval_inference(args.eval_infr_path, inference_data)

@@ -2,7 +2,7 @@ import torchvision.models as models
 import os
 import torch
 import os.path as osp
-from MobileNetV1.MobileNetv1 import mobilenet_w1, get_mobilenet
+from MobileNetV1 import mobilenet_w1, get_mobilenet
 from collections import OrderedDict
 from pprint import pformat
 

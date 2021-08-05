@@ -1,9 +1,9 @@
-from .export import export_onnx, export_mo
+from OpenVino_inference import export_onnx, export_mo
 import numpy as np
 import os.path as osp
 import os
 from openvino.inference_engine import IENetwork, IECore
-from help_functions.distributed import print_at_master
+from help_functions import print_at_master
 
 def conversion(args, model, snapshot_path, img_size=(128,128), save_path='./'):
 
