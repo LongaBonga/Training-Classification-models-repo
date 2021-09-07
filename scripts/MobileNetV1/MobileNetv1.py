@@ -8,7 +8,8 @@ __all__ = ['MobileNet', 'mobilenet_w1', 'mobilenet_w3d4', 'mobilenet_wd2', 'mobi
 
 import os
 import torch.nn as nn
-from .common import conv3x3_block, dwsconv3x3_block
+import torch
+from MobileNetV1 import conv3x3_block, dwsconv3x3_block
 
 
 class MobileNet(nn.Module):
@@ -97,7 +98,7 @@ def get_mobilenet(width_scale,
                   dws_simplified=False,
                   model_name=None,
                   pretrained=False,
-                  root=os.path.join("~", ".torch", "models"),
+                  root=os.path.join(torch.__path__[0], "models"),
                   **kwargs):
     """
     Create MobileNet model with specific parameters.
